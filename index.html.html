@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LKPD WebAR Efek Doppler</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#fff7eb;color:#332820}header{background:#6d2838;color:white;text-align:center;padding:20px}header h1{margin:0 0 6px}
+.wrap{max-width:1450px;margin:18px auto;display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:0 16px}.card{background:white;border:1px solid #ddc8aa;border-radius:16px;box-shadow:0 4px 15px #0001;overflow:hidden}.head{background:#f2e1ca;padding:14px 18px;font-weight:bold;color:#6b3f28}.body{padding:18px}
+h2{color:#7b2638;font-size:20px;margin-top:22px}h2:first-child{margin-top:0}h3{color:#6b3f28}p,li{line-height:1.55}
+input,textarea,select{width:100%;box-sizing:border-box;padding:9px;border:1px solid #cdb99d;border-radius:8px;margin:4px 0 10px}textarea{min-height:75px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.box{background:#fff9ef;border:1px solid #e3cfb1;border-radius:10px;padding:12px;margin:10px 0}.formula{text-align:center;font-size:20px;font-weight:bold;background:#fff1d5;padding:13px;border-radius:10px}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}th,td{border:1px solid #d8c3a8;padding:7px;text-align:center}th{background:#f0dfc5}
+.sim{position:sticky;top:10px}.control{border:1px solid #dfccb1;border-radius:12px;padding:12px;margin-bottom:10px;background:#fffaf3}.range{display:grid;grid-template-columns:1fr 70px;gap:8px;align-items:center}input[type=range]{accent-color:#7b2638;padding:0}.val{text-align:center;border:1px solid #ddc8aa;border-radius:7px;padding:7px}
+.dir{display:grid;grid-template-columns:1fr 1fr;gap:8px}.dir button,.btn{padding:10px;border:1px solid #c9ad87;border-radius:8px;background:white;font-weight:bold;cursor:pointer}.dir .active,.primary{background:#7b2638;color:white;border-color:#7b2638}
+.scene{height:210px;background:#eee0ce;border-radius:12px;position:relative;overflow:hidden}.icon{position:absolute;top:70px;font-size:55px}.src{left:7%}.obs{right:7%}.wave{position:absolute;top:100px;height:4px;background:#7b2638;border-radius:5px;animation:p 1.2s infinite}.w1{left:25%;width:15%}.w2{left:43%;width:15%;animation-delay:.3s}.w3{left:61%;width:15%;animation-delay:.6s}@keyframes p{50%{transform:scaleX(1.15);opacity:.5}}
+.result{text-align:center;background:#fff0d5;border:2px solid #c7954d;border-radius:12px;padding:13px;margin:12px 0}.big{font-size:30px;font-weight:bold;color:#7b2638}.btnrow{display:flex;gap:8px;flex-wrap:wrap}.btn{margin-top:5px}.note{font-size:13px;color:#65584d}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}.sim{position:static}}@media(max-width:550px){.grid,.dir{grid-template-columns:1fr}}
+@media print{.sim{display:none}.wrap{display:block}.card{box-shadow:none}.head{border:1px solid #aaa}}
+</style>
+<style>
+.doppler-figure{
+  margin:18px 0 22px;
+  border:1px solid #ddd;
+  border-radius:16px;
+  padding:16px;
+  background:#fff;
+  box-shadow:0 4px 14px rgba(0,0,0,.06);
+}
+.doppler-figure h4{margin:0 0 8px;font-size:17px}
+.doppler-figure .caption{font-size:12px;color:#666;margin-top:8px;line-height:1.5}
+.doppler-figure svg{width:100%;height:auto;display:block}
+.wave-near{stroke:#8b1e3f;stroke-width:2.4;fill:none}
+.wave-far{stroke:#536d7a;stroke-width:2.2;fill:none}
+.arrow{stroke:#222;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+.label{font-family:Arial,sans-serif;font-size:14px;font-weight:700;fill:#222}
+.smalllabel{font-family:Arial,sans-serif;font-size:12px;fill:#444}
+</style>
+
+</head><body>
+<header><h1>LKPD Interaktif & WebAR — Efek Doppler</h1><div>Gelombang Bunyi • Simulasi Virtual</div></header>
+
+<div class="wrap">
+<section class="card"><div class="head">📘 LEMBAR KERJA PESERTA DIDIK</div><div class="body">
+
+
+<div class="doppler-figure">
+  <h4>Gambar Konsep Efek Doppler</h4>
+  <svg viewBox="0 0 760 360" role="img" aria-label="Perbandingan muka gelombang saat sumber bunyi mendekati dan menjauhi pengamat">
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 z" fill="#222"></path>
+      </marker>
+    </defs>
+
+    <!-- panel mendekat -->
+    <rect x="10" y="10" width="360" height="335" rx="16" fill="#faf5f7" stroke="#d8c2ca"/>
+    <text x="190" y="36" text-anchor="middle" class="label">A. Sumber Mendekati Pengamat</text>
+
+    <!-- wavefronts compressed ahead -->
+    <circle cx="175" cy="175" r="34" class="wave-near"/>
+    <circle cx="150" cy="175" r="66" class="wave-near"/>
+    <circle cx="125" cy="175" r="98" class="wave-near"/>
+    <circle cx="100" cy="175" r="130" class="wave-near"/>
+
+    <!-- source -->
+    <text x="177" y="183" text-anchor="middle" font-size="31">🔊</text>
+    <text x="177" y="220" text-anchor="middle" class="smalllabel">Sumber</text>
+    <!-- listener -->
+    <text x="315" y="183" text-anchor="middle" font-size="31">👂</text>
+    <text x="315" y="220" text-anchor="middle" class="smalllabel">Pengamat</text>
+
+    <path d="M205 130 L285 130" class="arrow"/>
+    <text x="245" y="118" text-anchor="middle" class="smalllabel">vₛ</text>
+    <path d="M300 260 L235 260" class="arrow"/>
+    <text x="267" y="280" text-anchor="middle" class="smalllabel">vₚ</text>
+
+    <text x="285" y="75" text-anchor="middle" class="smalllabel">Muka gelombang lebih rapat</text>
+    <path d="M250 82 L292 145" stroke="#555" fill="none" stroke-dasharray="4 4"/>
+
+    <text x="190" y="320" text-anchor="middle" class="smalllabel">Frekuensi terdengar meningkat: fₚ &gt; fₛ</text>
+
+    <!-- panel menjauh -->
+    <rect x="390" y="10" width="360" height="335" rx="16" fill="#f5f8fa" stroke="#c5d1d8"/>
+    <text x="570" y="36" text-anchor="middle" class="label">B. Sumber Menjauhi Pengamat</text>
+
+    <!-- source now moving left; behind (left) compressed, ahead/right spread -->
+    <circle cx="575" cy="175" r="34" class="wave-far"/>
+    <circle cx="605" cy="175" r="66" class="wave-far"/>
+    <circle cx="635" cy="175" r="98" class="wave-far"/>
+    <circle cx="665" cy="175" r="130" class="wave-far"/>
+
+    <text x="575" y="183" text-anchor="middle" font-size="31">🔊</text>
+    <text x="575" y="220" text-anchor="middle" class="smalllabel">Sumber</text>
+    <text x="705" y="183" text-anchor="middle" font-size="31">👂</text>
+    <text x="705" y="220" text-anchor="middle" class="smalllabel">Pengamat</text>
+
+    <path d="M545 130 L475 130" class="arrow"/>
+    <text x="510" y="118" text-anchor="middle" class="smalllabel">vₛ</text>
+    <path d="M680 260 L620 260" class="arrow"/>
+    <text x="650" y="280" text-anchor="middle" class="smalllabel">vₚ</text>
+
+    <text x="690" y="75" text-anchor="middle" class="smalllabel">Muka gelombang lebih renggang</text>
+    <path d="M675 82 L640 125" stroke="#555" fill="none" stroke-dasharray="4 4"/>
+
+    <text x="570" y="320" text-anchor="middle" class="smalllabel">Frekuensi terdengar menurun: fₚ &lt; fₛ</text>
+  </svg>
+  <div class="caption">
+    <b>Keterangan:</b> Ketika sumber bergerak mendekati pengamat, muka gelombang di depan sumber
+    menjadi lebih rapat sehingga frekuensi yang diterima meningkat. Ketika sumber menjauh,
+    muka gelombang di depan pengamat menjadi lebih renggang sehingga frekuensi yang diterima menurun.
+  </div>
+<div class="note" style="margin:12px 0;padding:12px 14px;border-left:4px solid #8b1e3f;background:#faf5f7;border-radius:8px;">
+  <b>Amati gambar:</b> Perhatikan jarak antarmuka gelombang di depan sumber pada kondisi
+  mendekat dan menjauh. Perubahan kerapatan muka gelombang inilah yang berkaitan dengan
+  perubahan frekuensi yang diterima pengamat.
+</div>
+
+</div>
+<h2>1. Identitas Peserta Didik</h2><div class="grid">
+<div>Nama Lengkap<input id="nama"></div><div>Kelas<input id="kelas"></div>
+<div>Kelompok<input id="kelompok"></div><div>Tanggal<input id="tgl" type="date"></div></div>
+
+<h2>2. Tujuan Pembelajaran</h2><div class="box"><ol>
+<li>Menjelaskan pengertian Efek Doppler.</li><li>Menjelaskan pengaruh gerak relatif sumber dan pengamat terhadap frekuensi bunyi yang terdengar.</li>
+<li>Membedakan kondisi saling mendekat dan saling menjauh.</li><li>Menggunakan persamaan Efek Doppler untuk menentukan frekuensi terdengar.</li>
+<li>Menganalisis pengaruh kecepatan sumber dan pengamat terhadap frekuensi terdengar.</li></ol></div>
+
+<h2>3. Petunjuk Penggunaan</h2><ol>
+<li>Isi identitas peserta didik.</li><li>Baca materi sebelum melakukan simulasi.</li>
+<li>Atur frekuensi sumber, kecepatan sumber, dan kecepatan pengamat melalui slider.</li>
+<li>Pilih kondisi <b>saling mendekat</b> atau <b>saling menjauh</b>.</li>
+<li>Amati frekuensi terdengar yang muncul otomatis.</li><li>Catat hasil pada tabel dan jawab pertanyaan analisis.</li>
+<li>Kerjakan tugas dan buat kesimpulan.</li></ol><div class="box note"><b>Ketentuan simulasi:</b> cepat rambat bunyi di udara digunakan sebesar 340 m/s.</div>
+
+<h2>4. Sekilas Materi</h2>
+<h3>A. Pengertian</h3><p>Efek Doppler adalah perubahan frekuensi bunyi yang terdengar oleh pengamat akibat adanya gerak relatif antara sumber bunyi dan pengamat. Frekuensi yang diterima pengamat dapat berbeda dari frekuensi yang dihasilkan sumber.</p>
+<h3>B. Besaran yang Digunakan</h3><p><b>fₛ</b> adalah frekuensi sumber, <b>fₚ</b> adalah frekuensi yang terdengar, <b>v</b> adalah cepat rambat bunyi, <b>vₛ</b> adalah kecepatan sumber, dan <b>vₚ</b> adalah kecepatan pengamat.</p>
+<h3>C. Persamaan Efek Doppler</h3><div class="formula">fₚ = fₛ × (v ± vₚ) / (v ∓ vₛ)</div>
+<p>Tanda pada persamaan ditentukan oleh arah gerak relatif. Dalam simulasi, tanda akan dipilih otomatis berdasarkan kondisi yang dipilih.</p>
+<h3>D. Saling Mendekat</h3><p>Ketika sumber dan pengamat bergerak relatif saling mendekat, frekuensi yang diterima pengamat menjadi lebih tinggi. Gelombang yang sampai ke pengamat menjadi lebih rapat sehingga fₚ lebih besar daripada fₛ pada kondisi bergerak.</p>
+<h3>E. Saling Menjauh</h3><p>Ketika sumber dan pengamat bergerak relatif saling menjauh, frekuensi yang diterima pengamat menjadi lebih rendah. Gelombang yang sampai ke pengamat menjadi lebih renggang sehingga fₚ lebih kecil daripada fₛ.</p>
+<h3>F. Prinsip Penting</h3><div class="box"><b>Mendekat → frekuensi terdengar meningkat.</b><br><b>Menjauh → frekuensi terdengar menurun.</b><br><br>Perubahan terjadi pada frekuensi yang diterima pengamat karena gerak relatif, bukan karena frekuensi asli sumber berubah.</div>
+
+<h2>5. Uji Coba / Praktik Virtual</h2>
+<h3>Kegiatan 1 — Membandingkan Arah Gerak</h3><p>Atur fₛ = 500 Hz, vₛ = 10 m/s, dan vₚ = 5 m/s. Bandingkan kondisi saling mendekat dan saling menjauh.</p>
+<table><tr><th>Kondisi</th><th>fₛ</th><th>vₛ</th><th>vₚ</th><th>fₚ</th></tr>
+<tr><td>Mendekat</td><td>500</td><td>10</td><td>5</td><td><input id="k1a"></td></tr>
+<tr><td>Menjauh</td><td>500</td><td>10</td><td>5</td><td><input id="k1b"></td></tr></table>
+
+<h3>Kegiatan 2 — Pengaruh Kecepatan Sumber</h3><p>Atur fₛ = 600 Hz dan vₚ = 0 m/s. Pilih saling mendekat. Ubah vₛ menjadi 0, 10, 20, dan 30 m/s.</p>
+<table><tr><th>vₛ (m/s)</th><th>fₛ (Hz)</th><th>vₚ (m/s)</th><th>fₚ (Hz)</th></tr>
+<tr><td>0</td><td>600</td><td>0</td><td><input id="k2a"></td></tr><tr><td>10</td><td>600</td><td>0</td><td><input id="k2b"></td></tr><tr><td>20</td><td>600</td><td>0</td><td><input id="k2c"></td></tr><tr><td>30</td><td>600</td><td>0</td><td><input id="k2d"></td></tr></table>
+
+<h3>Kegiatan 3 — Pengaruh Kecepatan Pengamat</h3><p>Atur fₛ = 600 Hz dan vₛ = 0 m/s. Pilih saling mendekat. Ubah vₚ menjadi 0, 10, 20, dan 30 m/s.</p>
+<table><tr><th>vₚ (m/s)</th><th>fₛ (Hz)</th><th>vₛ (m/s)</th><th>fₚ (Hz)</th></tr>
+<tr><td>0</td><td>600</td><td>0</td><td><input id="k3a"></td></tr><tr><td>10</td><td>600</td><td>0</td><td><input id="k3b"></td></tr><tr><td>20</td><td>600</td><td>0</td><td><input id="k3c"></td></tr><tr><td>30</td><td>600</td><td>0</td><td><input id="k3d"></td></tr></table>
+
+<h2>6. Analisis Hasil</h2><div class="box">
+<p>1. Apa perbedaan frekuensi terdengar pada kondisi saling mendekat dan menjauh?</p><textarea id="a1"></textarea>
+<p>2. Bagaimana pengaruh bertambahnya kecepatan sumber terhadap frekuensi terdengar?</p><textarea id="a2"></textarea>
+<p>3. Bagaimana pengaruh bertambahnya kecepatan pengamat terhadap frekuensi terdengar?</p><textarea id="a3"></textarea>
+<p>4. Mengapa frekuensi terdengar dapat berbeda dari frekuensi sumber?</p><textarea id="a4"></textarea>
+<p>5. Apa hubungan arah gerak relatif dengan perubahan frekuensi terdengar?</p><textarea id="a5"></textarea></div>
+
+<h2>7. Tugas Peserta Didik</h2><div class="box">
+<p><b>Tugas 1.</b> Atur fₛ = 700 Hz, vₛ = 20 m/s, dan vₚ = 10 m/s. Tentukan fₚ pada kondisi mendekat dan menjauh. Catat kedua hasil.</p><textarea id="t1"></textarea>
+<p><b>Tugas 2.</b> Pilih salah satu hasil simulasi. Tuliskan diketahui, ditanyakan, persamaan, substitusi nilai, dan hasil perhitungan.</p><textarea id="t2"></textarea>
+<p><b>Tugas 3.</b> Buat kesimpulan mengenai pengaruh kecepatan sumber, kecepatan pengamat, dan arah gerak terhadap frekuensi terdengar.</p><textarea id="t3"></textarea></div>
+
+<h2>8. Refleksi</h2><div class="box">
+<label><input type="checkbox" style="width:auto"> Saya dapat menjelaskan Efek Doppler.</label>
+<label><input type="checkbox" style="width:auto"> Saya dapat menggunakan persamaan Efek Doppler.</label>
+<label><input type="checkbox" style="width:auto"> Saya dapat menganalisis hasil simulasi.</label>
+<p>Hal yang paling saya pahami:</p><textarea></textarea><p>Hal yang masih perlu saya pelajari:</p><textarea></textarea></div>
+
+<div class="btnrow"><button class="btn primary" onclick="print()">🖨 Cetak LKPD</button><button class="btn" onclick="save()">💾 Simpan Data</button></div>
+</div></section>
+
+<section class="card sim"><div class="head">🧪 WEBAR / SIMULASI EFEK DOPPLER</div><div class="body">
+<div class="control"><h3>🔊 Frekuensi Sumber</h3><div class="range"><input id="fs" type="range" min="100" max="1500" value="500" step="10" oninput="update()"><div class="val" id="fsv">500 Hz</div></div>
+<h3>🚗 Kecepatan Sumber</h3><div class="range"><input id="vs" type="range" min="0" max="100" value="10" oninput="update()"><div class="val" id="vsv">10 m/s</div></div></div>
+<div class="control"><h3>👂 Kecepatan Pengamat</h3><div class="range"><input id="vp" type="range" min="0" max="100" value="5" oninput="update()"><div class="val" id="vpv">5 m/s</div></div>
+<h3>Arah Gerak</h3><div class="dir"><button id="near" class="active" onclick="direction='near';update()">↔ Saling Mendekat</button><button id="far" onclick="direction='far';update()">↔ Saling Menjauh</button></div></div>
+
+<div class="scene"><div class="icon src">🔊</div><div class="icon obs">👂</div><div class="wave w1"></div><div class="wave w2"></div><div class="wave w3"></div></div>
+<div class="result"><div>FREKUENSI TERDENGAR</div><div class="big" id="fp">— Hz</div><div id="msg"></div></div>
+<div class="box"><b>Persamaan:</b><div class="formula" id="eq">fₚ = fₛ × (v + vₚ) / (v − vₛ)</div><p class="note">v = 340 m/s. Hasil dihitung otomatis dari slider.</p></div>
+<div class="btnrow"><button class="btn primary" onclick="tone()">🔊 Putar Bunyi</button><button class="btn" onclick="stop()">⏹ Hentikan</button><button class="btn" onclick="putTable()">➜ Masukkan Hasil</button></div>
+
+<h3>📊 Nilai Saat Ini</h3><table><tr><th>Besaran</th><th>Nilai</th></tr><tr><td>fₛ</td><td id="rfs"></td></tr><tr><td>vₛ</td><td id="rvs"></td></tr><tr><td>vₚ</td><td id="rvp"></td></tr><tr><td>Kondisi</td><td id="rd"></td></tr><tr><td>fₚ</td><td id="rfp"></td></tr></table>
+<div class="box note"><b>Mode AR kamera:</b> tersedia sebagai tampilan kamera sederhana. Browser harus memberikan izin kamera dan halaman dijalankan melalui HTTPS atau localhost.</div>
+<button class="btn" onclick="camera()">📷 Aktifkan Kamera AR</button><video id="vid" autoplay playsinline style="display:none;width:100%;margin-top:8px;border-radius:10px"></video>
+</div></section></div>
+<footer>LKPD WebAR Fisika — Efek Doppler</footer>
+
+<script>
+const V=340;let direction='near',ctx=null,osc=null;
+function val(id){return +document.getElementById(id).value}
+function get(){let fs=val('fs'),vs=val('vs'),vp=val('vp'),fp=direction==='near'?fs*(V+vp)/(V-vs):fs*(V-vp)/(V+vs);return{fs,vs,vp,fp}}
+function update(){let d=get();document.getElementById('fsv').textContent=d.fs+' Hz';document.getElementById('vsv').textContent=d.vs+' m/s';document.getElementById('vpv').textContent=d.vp+' m/s';document.getElementById('fp').textContent=d.fp.toFixed(2)+' Hz';document.getElementById('rfs').textContent=d.fs+' Hz';document.getElementById('rvs').textContent=d.vs+' m/s';document.getElementById('rvp').textContent=d.vp+' m/s';document.getElementById('rfp').textContent=d.fp.toFixed(2)+' Hz';document.getElementById('rd').textContent=direction==='near'?'Saling mendekat':'Saling menjauh';document.getElementById('msg').textContent=d.fp>d.fs?'Frekuensi terdengar lebih tinggi dari sumber.':d.fp<d.fs?'Frekuensi terdengar lebih rendah dari sumber.':'Frekuensi terdengar sama dengan sumber.';document.getElementById('eq').textContent=direction==='near'?'fₚ = fₛ × (v + vₚ) / (v − vₛ)':'fₚ = fₛ × (v − vₚ) / (v + vₛ)';document.getElementById('near').classList.toggle('active',direction==='near');document.getElementById('far').classList.toggle('active',direction==='far')}
+function putTable(){let d=get();if(direction==='near')document.getElementById('k1a').value=d.fp.toFixed(2);else document.getElementById('k1b').value=d.fp.toFixed(2)}
+function tone(){let d=get();stop();ctx=new(window.AudioContext||window.webkitAudioContext)();osc=ctx.createOscillator();let g=ctx.createGain();osc.frequency.value=Math.min(d.fp,18000);g.gain.value=.06;osc.connect(g);g.connect(ctx.destination);osc.start()}
+function stop(){if(osc){osc.stop();osc=null}if(ctx){ctx.close();ctx=null}}
+async function camera(){try{let s=await navigator.mediaDevices.getUserMedia({video:true});let v=document.getElementById('vid');v.srcObject=s;v.style.display='block'}catch(e){alert('Kamera tidak dapat diakses. Berikan izin kamera dan gunakan HTTPS/localhost.')}}
+function save(){let d=get(),o={identitas:{nama:nama.value,kelas:kelas.value,kelompok:kelompok.value,tanggal:tgl.value},simulasi:d,arah:direction,analisis:[a1.value,a2.value,a3.value,a4.value,a5.value],tugas:[t1.value,t2.value,t3.value]};let b=new Blob([JSON.stringify(o,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='LKPD_Efek_Doppler.json';a.click()}
+update();
+</script></body></html>
